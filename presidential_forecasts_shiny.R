@@ -88,7 +88,9 @@ server <- function(input, output) {
   
   output$plot <- renderPlot({
     input$newplot
-    plot(x <- 1:15, y <- presidentialForecast$Actual)
+    plot(x=1:15, y=presidentialForecast$Actual, main="Actual Election Results from 1952-2008",
+        xlab="Indexed election year from 1952-2008 (1 ~ 1952, 15 ~ 2008)",
+        ylab="Actual two-party vote share of incumbent party", col="red")
   })
   
 }
