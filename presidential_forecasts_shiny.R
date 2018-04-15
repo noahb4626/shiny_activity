@@ -33,8 +33,6 @@ install.packages("EBMAforecast")
 # show predicted outcomes from one of the forecasting teams' forecasts
 ##
 
-
-
 library(shiny)
 # Define UI for dataset viewer app ----
 ui <- fluidPage(
@@ -66,7 +64,7 @@ ui <- fluidPage(
     # Main panel for displaying outputs ----
     mainPanel(
       tableOutput("view"),
-      plotOutput("plot")
+      plotOutput("plot", click = "plot_click"), verbatimTextOutput("info")
       )
   )
 )
@@ -102,12 +100,17 @@ server <- function(input, output) {
     plot(x=1:15, y=presidentialForecast$Actual, main="Actual & Predicted Election Results from 1952-2008",
         xlab="Indexed election year from 1952-2008 (1 ~ 1952, 15 ~ 2008)",
         ylab="Actual two-party vote share of incumbent party", col="red")
-    legend(12,62, c("Actual","Predictor"),
+    legend(12.5,62, c("Actual","Predictor"),
            lty=c(3,3), col=c("red","black"))
     points(x=1:15, y=forecast())
+  })
+
+  output$info <- renderText({
+    paste0("x=", input$plot_click$x, "\ny=", input$plot_click$y)
   })
   
 }
 
 # Create Shiny app ----
 shinyApp(ui, server)
+
