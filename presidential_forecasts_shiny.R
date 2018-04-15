@@ -65,7 +65,10 @@ ui <- fluidPage(
     ),
     
     # Main panel for displaying outputs ----
-    mainPanel(tableOutput("view"))
+    mainPanel(
+      tableOutput("view"),
+      plotOutput("plot")
+      )
   )
 )
 
@@ -81,6 +84,11 @@ server <- function(input, output) {
   # Show the first "n" observations ----
   output$view <- renderTable({
     head(datasetInput(), n = input$obs)
+  })
+  
+  output$plot <- renderPlot({
+    input$newplot
+    plot(x <- 1:15, y <- presidentialForecast$Actual)
   })
   
 }
