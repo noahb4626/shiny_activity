@@ -53,15 +53,14 @@ ui <- fluidPage(
                    label = "Number of elections to display:",
                    value = 15),
       
+      # Input: Selector for choosing comparison predictor to plot against ----
+      selectInput(inputId = "predictor",
+                  label = "Choose a predictor for comparison:",
+                  choices = c("Campbell", "Lewis-Beck", "EWT2C2", "Fair", "Hibbs", "Abramowitz")),
+    
       # Include clarifying text ----
       helpText("Here are the results from presidential forecasts from 1952-2008")
       
-      # Input: actionButton() to defer the rendering of output ----
-      # until the user explicitly clicks the button (rather than
-      # doing it immediately when inputs change). This is useful if
-      # the computations required to render output are inordinately
-      # time-consuming.
-     # actionButton("update", "Update View")
     ),
     
     # Main panel for displaying outputs ----
@@ -86,11 +85,26 @@ server <- function(input, output) {
     head(datasetInput(), n = input$obs)
   })
   
+  # Return the requested dataset ----
+  forecast <- reactive({
+    switch(input$predictor,
+           "Campbell" = presidentialForecast$Campbell,
+           "Lewis-Beck" = presidentialForecast$`Lewis-Beck`,
+           "EWT2C2" = presidentialForecast$EWT2C2,
+           "Fair" = presidentialForecast$Fair,
+           "Hibbs" = presidentialForecast$Hibbs,
+           "Abramowitz" = presidentialForecast$Abramowitz)
+  })
+  
+  # Plot actual observations
   output$plot <- renderPlot({
     input$newplot
-    plot(x=1:15, y=presidentialForecast$Actual, main="Actual Election Results from 1952-2008",
+    plot(x=1:15, y=presidentialForecast$Actual, main="Actual & Predicted Election Results from 1952-2008",
         xlab="Indexed election year from 1952-2008 (1 ~ 1952, 15 ~ 2008)",
         ylab="Actual two-party vote share of incumbent party", col="red")
+    legend(12,62, c("Actual","Predictor"),
+           lty=c(3,3), col=c("red","black"))
+    points(x=1:15, y=forecast())
   })
   
 }
